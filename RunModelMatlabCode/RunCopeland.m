@@ -28,7 +28,7 @@
 % SOFTWARE.
 %%% ----------------------------------------------------------------------------
 
-close all; 
+% close all; 
 clear all;
 
 global Init Tm BPo 
@@ -81,7 +81,43 @@ Tm=data.temp(1);
 [pars,Init] = load_pars_Init_Copeland(data);
 
 %%%Run simulation
+global lag
+lag = [];
 [sol] = modelDriver(pars,Init,[0 8]);
+
+modelName = 'fever';
+IQMmakeMEXmodel(IQMmodel([modelName '.txt']))
+newmodel = str2func(modelName);
+t = sol.x;
+sim = newmodel(t, Init, [pars; pars(87)]);
+
+
+figure(9991)
+subplot(2,2,1)
+plot(lag(:,1), lag(:,2))
+ylabel('lag1')
+xlabel('Time')
+subplot(2,2,2)
+plot(lag(:,1), lag(:,3))
+ylabel('lag2')
+xlabel('Time')
+subplot(2,2,3)
+plot(lag(:,1), lag(:,4))
+ylabel('lag-effect')
+xlabel('Time')
+
+nstates = length(sim.states);
+[m,n] = CloseToSquare(nstates);
+
+figure(999); clf;
+for i = 1:nstates
+    subplot(m,n,i)
+    plot(sim.time, sim.statevalues(:,i))
+    hold on 
+    plot(sol.x, sol.y(i,:),'--')
+    legend({'IQM','Org'})
+    title(sim.states{i})
+end
 
 %%%Computations to obtain BP
 Vla  = sol.y(10,:);
@@ -90,43 +126,56 @@ pla  = Vla/Cla;
 
 
 %%%Plot simuation results and data
-figure(1); clf;
+figure(1); %clf;
+set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+
+subplot(2,3,1)
 h1=plot(sol.x,pla,'k','linewidth',4);
 hold on
+plot(sim.time, sim.variablevalues(:,4),'b--', 'linewidth',4)
 errorbar(BPtime,BP,BPsd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 ylabel('BP (mmHg)');
 xlabel('Time (hr)');
 set(gca,'fontsize',24)
 xlim([0,8])
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(2); clf;
+% figure(2); %clf;
+subplot(2,3,2)
 h2=plot(sol.x,sol.y(14,:),'k','linewidth',4);
 hold on
+plot(sim.time, sim.statevalues(:,14),'b--', 'linewidth',4)
 errorbar(HRtime,HR,HRsd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 ylabel('HR (bpm)');
 xlabel('Time (hr)');
 set(gca,'fontsize',24)
 xlim([0,8])
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(3); clf;
+% figure(3); %clf;
+subplot(2,3,3)
 h3=plot(sol.x,sol.y(1,:),'k','linewidth',4);
 hold on
+plot(sim.time, sim.statevalues(:,1),'b--', 'linewidth',4)
 errorbar(IMMUNEtime,TNF,TNFsd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 set(gca,'fontsize',24);
 ylabel({'TNF-\alpha (pg/mL)'});
 xlabel('Time (hr)');
 ylim([-10 400]);
 xlim([0,8])
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(4); clf;
+% figure(4); %clf;
+subplot(2,3,4)
 h4=plot(sol.x,sol.y(3,:),'k','linewidth',4);
 hold on
+plot(sim.time, sim.statevalues(:,3),'b--', 'linewidth',4)
 errorbar(IMMUNEtime,IL8,IL8sd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 set(gca,'fontsize',24);
 ylabel({'IL-8 (pg/mL)'});
@@ -135,22 +184,28 @@ ylim([-10 400]);
 xlim([0,8])
 set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(5); clf;
+% figure(5); %clf;
+subplot(2,3,5)
 h5=plot(sol.x,sol.y(4,:),'k','linewidth',4);
 hold on
+plot(sim.time, sim.statevalues(:,4),'b--', 'linewidth',4)
 errorbar(IMMUNEtime,IL6,IL6sd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 set(gca,'fontsize',24);
 ylabel({'IL-6 (pg/mL)'});
 xlabel('Time (hr)');
 ylim([-20 1400]);
 xlim([0,8])
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(6); clf;
+% figure(6); %clf;
+subplot(2,3,6)
 h6=plot(sol.x,sol.y(8,:),'k','linewidth',4);
 hold on
+plot(sim.time, sim.statevalues(:,8),'b--', 'linewidth',4)
 errorbar(TEMPtime,TEMP,TEMPsd,'bo', 'MarkerSize',12,'MarkerFaceColor','b','linewidth',2);
 hold on
 ylabel('Temp (^{\circ} C)')
@@ -158,15 +213,19 @@ xlabel('Time (hr)');
 set(gca,'fontsize',24);
 set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM', 'Data'})
 
-figure(7); clf;
+figure(7); %clf;
 h7=plot(sol.x,sol.y(9,:),'k','linewidth',4);
+hold on 
+plot(sim.time, sim.statevalues(:,9),'b--', 'linewidth',4)
 ylabel('PPT (kPa)')
 xlabel('Time (hr)');
 set(gca,'fontsize',24)
 xlim([0,8])
 set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
+legend({'Org', 'IQM'})
 
 
 

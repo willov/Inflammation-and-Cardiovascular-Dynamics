@@ -1,11 +1,10 @@
 function xdot = model(t,y,Z,pars)
 
-global BPo Tm
+global BPo Tm lag
 
 %----------------------------------Lags------------------------------------
 ylag1 = Z(:,1); %only one lag ~1.75. NO is dependent on TNF and IL10 at 
                 %t-1.75 hours
-                
 %---------------------------------States-----------------------------------
 tnf   = y(1);  
 il10  = y(2);  
@@ -47,8 +46,8 @@ dtnf   = ktnfm*ma*fs(il10,xtnf10,htnf10)*fs(il6,xtnf6,htnf6) - ktnf*(tnf - stnf)
 dil10  = ma*(k10m + k106*f(il6,x106,h106)) - k10*(il10 - s10);
 dil8   = ma*(k8m + k8tnf*f(tnf,x8tnf,h8tnf))*fs(il10,x810,h810) - k8*(cxcl8 - s8);
 dil6   = ma*(k6m + k6tnf*f(tnf,x6tnf,h6tnf))*fs(il6,x66,h66)*fs(il10,x610,h610) - k6*(il6 - s6);
-dmr    = kmr*mr*(1-(mr/mmax)) - (f(pe,xmpe,hmpe))*(sm + kmtnf*f(tnf,xmtnf,hmtnf)*(xmtnf)^hmtnf)*fs(il10,xm10,hm10)*mr;
 dma    = (f(pe,xmpe,hmpe))*(sm + kmtnf*f(tnf,xmtnf,hmtnf)*(xmtnf)^hmtnf)*fs(il10,xm10,hm10)*mr - kma*ma;   
+dmr    = kmr*mr*(1-(mr/mmax)) - (f(pe,xmpe,hmpe))*(sm + kmtnf*f(tnf,xmtnf,hmtnf)*(xmtnf)^hmtnf)*fs(il10,xm10,hm10)*mr;
 dpe    = -kpe*pe;
  
 xdot = [dtnf; dil10; dil8; dil6; dma; dmr; dpe];
@@ -106,16 +105,13 @@ xdot = [xdot; Q - qa; qa - qs; qv - Q;  qs - qv];
 tau2  = pars(58); HM    = pars(59); Hm    = pars(60); kh    = pars(61);   
 xht   = pars(62); hht   = pars(63); xhp = pars(87);   hhp = pars(88);
 
-ft    = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)...
-    *((((abs(xhp - BPo))^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
-
-if (Vla/Cla) > 100
-ft = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)...
-    *((((abs(xhp - BPo))^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
+ft = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)*((((abs(xhp - BPo))      ^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
+      
+if (Vla/Cla) > 100      
+ft = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)*((((abs(xhp - BPo))      ^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
 end
 if (Vla/Cla) <= 100
-ft = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)...
-    *((((abs((Vla/Cla) - BPo))^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
+ft = kh*(HM - Hm)*((((abs(temp2 - Tm))^hht/((abs(temp2 - Tm))^hht + (abs(xht - Tm))^hht)))^1)*((((abs((Vla/Cla) - BPo))^hhp/((abs((Vla/Cla) - BPo))^hhp + (abs(xhp - BPo))^hhp)))^1) + Hm;
 end
 
 xdot = [xdot; (-hr + ft)/tau2];
@@ -127,6 +123,9 @@ knom  = pars(76); kno  = pars(77);  xntnf = pars(78); xn10  = pars(79);
 hntnf = pars(80); hn10 = pars(81);
 
 dno   = knom*ma*f(ylag1(1),xntnf,hntnf)*fs(ylag1(2),xn10,hn10) - kno*no;
+
+   lag = [lag; t f(ylag1(1),xntnf,hntnf) fs(ylag1(2),xn10,hn10) f(ylag1(1),xntnf,hntnf)*fs(ylag1(2),xn10,hn10)];             
+
 
 xdot = [xdot; dno];
 
@@ -144,7 +143,7 @@ function [y] = fs(v,x,hill)
   y = x^hill/(v^hill + x^hill); 
   
 function [y] = f(v,x,hill)
-  y  = (v)^hill/(v^hill + x^hill); 
+  y  = v^hill/(v^hill + x^hill); 
 
 
   
