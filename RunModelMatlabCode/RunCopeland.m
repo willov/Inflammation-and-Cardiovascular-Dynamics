@@ -105,6 +105,7 @@ subplot(2,2,3)
 plot(lag(:,1), lag(:,4))
 ylabel('lag-effect')
 xlabel('Time')
+sgtitle('Lags, Copeland')
 
 nstates = length(sim.states);
 [m,n] = CloseToSquare(nstates);
@@ -118,12 +119,13 @@ for i = 1:nstates
     legend({'IQM','Org'})
     title(sim.states{i})
 end
+sgtitle('All states, Copeland')
+
 
 %%%Computations to obtain BP
 Vla  = sol.y(10,:);
 Cla  = pars(70); 
 pla  = Vla/Cla;
-
 
 %%%Plot simuation results and data
 figure(1); %clf;
@@ -182,7 +184,7 @@ ylabel({'IL-8 (pg/mL)'});
 xlabel('Time (hr)');
 ylim([-10 400]);
 xlim([0,8])
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
 legend({'Org', 'IQM', 'Data'})
 
@@ -211,7 +213,7 @@ hold on
 ylabel('Temp (^{\circ} C)')
 xlabel('Time (hr)');
 set(gca,'fontsize',24);
-set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
+% set(gcf, 'units','normalized','outerposition',[0 0 0.5 0.5])
 grid on;
 legend({'Org', 'IQM', 'Data'})
 
