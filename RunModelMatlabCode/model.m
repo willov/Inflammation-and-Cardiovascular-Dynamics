@@ -144,5 +144,3 @@ y = x^hill/(v^hill + x^hill);
 
 function [y] = f(v,x,hill)
 y  = v^hill/(v^hill + x^hill);
-
-

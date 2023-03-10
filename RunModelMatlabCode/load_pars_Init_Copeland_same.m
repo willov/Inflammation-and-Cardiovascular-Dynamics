@@ -1,4 +1,4 @@
-function [pars, Init] = load_pars_Init_Copeland(data)
+function [pars, Init] = load_pars_Init_Copeland_same(data)
 global ODE_TOL DIFF_INC 
 
 ODE_TOL  = 1e-8; 
@@ -7,20 +7,21 @@ DIFF_INC = sqrt(ODE_TOL);
 %---------------------Inflammatory Model Parameters------------------------
 %Rate Constants
 % copeland original
-k10   = 1.1107;    % Nom Val 0.800	
+
+k10   = 0.62293;    % Nom Val 0.800	
 k6    = 0.79658;    % Nom Val 0.660
 k8    = 0.69839;    % Nom Val 0.660
-ktnf  = 1.4873;    % Nom Val 1.00
-	    
+ktnf  = 1.48728;    % Nom Val 1.0
+     
 kma   = 2.51; % Not estimated
 kmpe  = 4.14E-06; % Not estimated	
-kmr   = 0.006; % Not estimated	
-kpe   = 1.0819;    % Nom Val 1.01   
+kmr   = 0.006; % Not estimated  
+kpe   = 1.08192;    % Nom Val 1.01    
 
-k10m  = 0.020536;  % Nom Val 0.019	
-k6m   = 0.98831;    % Nom Val 0.81
-k8m   = 0.07;    % Nom Val 0.560    
-ktnfm = 0.69712;    % Nom Val 0.60 
+k10m  = 0.0077847;  % Nom Val 0.019	
+k6m   = 0.51063;    % Nom Val 0.81        
+k8m   = 0.37219;    % Nom Val 0.560
+ktnfm = 0.69712;    % Nom Val 0.60
 
 %Saturation Constants
 x610   = 34.7720;   % Not estimated
@@ -45,7 +46,7 @@ h810   = 1.5;       % Not estimated
 htnf10 = 3;         % Not estimated 
 htnf6  = 2;         % Not estimated 
 hm10   = 0.3;       % Not estimated 
-hmtnf  = 3.16;      % Not estimated 
+hmtnf  = 3.160;      % Not estimated 
 hmpe   = 1;         % Not estimated
 
 k6tnf  = 0.81;      % Not estimated         

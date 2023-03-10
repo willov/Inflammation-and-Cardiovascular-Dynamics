@@ -6,14 +6,15 @@ DIFF_INC = sqrt(ODE_TOL);
 
 %---------------------Inflammatory Model Parameters------------------------
 %Rate Constants
+
 k10   = 0.62293;    % Nom Val 0.800	
 k6    = 0.79658;    % Nom Val 0.660
-k8    = 0.69839;    % Nom Val 0.660	
-ktnf  = 1.48728;    % Nom Val 1.00	
+k8    = 0.69839;    % Nom Val 0.660
+ktnf  = 1.48728;    % Nom Val 1.0
      
-kma   = 2.51;		% Not estimated
-kmpe  = 4.14E-06;	% Not estimated	
-kmr   = 0.006;  	% Not estimated  
+kma   = 2.51; % Not estimated
+kmpe  = 4.14E-06; % Not estimated	
+kmr   = 0.006; % Not estimated  
 kpe   = 1.08192;    % Nom Val 1.01    
 
 k10m  = 0.0077847;  % Nom Val 0.019	
@@ -56,18 +57,18 @@ kmtnf  = 4.14e-06;  % Not estimated
 stnf  = data.TNF(1);    % Value 1.118
 s10   = data.IL10(1);   % Value 0.2345
 s8    = data.IL8(1);    % Value	3.0105
-s6    = data.IL6(1); 	% Value 1.0475
-sm    = 0.0414;         % Not eestimated 
-mmax  = 30000;          % Not estimated
+s6    = data.IL6(1); % Value 1.0475
+sm    = 0.0414;      % Not estimated 
+mmax  = 30000;       % Not estimated
 
 %----------------------------Initial Conditions----------------------------
 tnfI  = data.TNF(1); 
 il10I = data.IL10(1); 
 il8I  = data.IL8(1);  
 il6I  = data.IL6(1); 
-maI   = 0.0;   	% Not estimated
-mrI   = 28200; 	% Not estimated
-peI   = 2.0;   	% Not estimated
+maI   = 0.0;    % Not estimated
+mrI   = 28200;  % Not estimated
+peI   = 2.0;    % Not estimated
 tempI = data.temp(1); 
 
 Init = [tnfI il10I il8I il6I maI mrI peI];
@@ -89,21 +90,21 @@ kt10  = 0.0625; % Not estimated
 xt10  = 34.7720;% Not estimated
 ht10  = 1;      % Not estimated
 
-
+%-----------------------Temperature Initial Condition--------------------
 Init = [Init tempI];
 
 %------------------------Pain Perception Threshold pars--------------------
-kpepp = 0.17881;        % Nom Val 0.2 
-kpp   = 0.15;           % Not estimated
+kpepp = 0.17881;  % Nom Val 0.2 
+kpp   = 0.15;  % Not estimated
 ppM   = data.pain(1);   % Value 7.8115
 
-Init = [Init ppM];
+Init = [Init cxcl8];
 
 %---------------------Cardiovascular Model Parameters----------------------
 % Height, weight and gender used to predict blood volume
 H      = data.height;  % Subject height cm
 W      = data.weight;  % Subject weight kg
-Gender = 1;            % Male 1, female 2
+Gender = 1;   % Male 1, female 2
 
 % Define body surface area, used to predict blood volume
 BSA = sqrt(H*W/3600);  % Body surface area
@@ -152,10 +153,10 @@ VStot  = VlaS + VlvS + VsaS + VsvS;
 Vun    = 10;
 
 % Compliances, stressed volume percentages from Beneken are weighted averages (Beneken and deWit)
-Cla = 1.39817;   % Nom Val VlaS/pla;  % Artery compliance (stressed to total volume arteries ~25%)
-Clv = 8.97171;   % Nom Val VlvS/plv;  % Venous compliance (stressed to total volume veins ~7%)
-Csa = 0.25972;   % Nom Val VsaS/psa;  % Organ bed artery compliance 
-Csv = 47.45039;  % Nom Val VsvS/psv;  % Organ bed venous compliance
+Cla = 1.39817;  % Nom Val VlaS/pla;  % Artery compliance (stressed to total volume arteries ~25%)
+Clv = 8.97171;  % Nom Val VlvS/plv;  % Venous compliance (stressed to total volume veins ~7%)
+Csa = 0.25972; % Nom Val VsaS/psa;  % Organ bed artery compliance 
+Csv = 47.45039; % Nom Val VsvS/psv;  % Organ bed venous compliance
 
 % Parameters needed to set up information within the heart (Olufsen and Williams non-puls)
 Vun  = 10;		    % Unstressed ventricular volume
@@ -164,7 +165,7 @@ Ves  = 47  - Vun;
 Em   = 0.026515;    % Nom Val plv/Ved;     % Minimum elasticity of the heart [ pv / (Ved - Vun) ]
 EM   = 3.09564;     % Nom Val pla/Ves;
 
-HI  = data.HR(1);   % Value 60.5574
+HI = data.HR(1);   % Value 60.5574
 hr = HI/60;
 
 VT   = VStot;
@@ -183,18 +184,18 @@ kh   = 0.24705; % Nom Val 0.25
 tau2 = 0.5;     % Not estimated
 xhp  = 143;     % Not estimated 
 xht  = 36.3;    % Not estimated 
-hht  = 2; 		% Not estimated
-hhp  = 4; 		% Not estimated
+hht  = 2; % Not estimated
+hhp  = 4; % Not estimated
 
 Init = [Init HI];
 
 %------------------Nitric oxide equation parameters------------------------
-knom  = 0.002; 	% Not estimated
-kno   = 0.045; 	% Not estimated
+knom  = 0.002;  % Not estimated
+kno   = 0.045;  % Not estimated
 xntnf = 170;    % Not estimated (Personalized)
-hntnf = 2; 		% Not estimated
-xn10  = 4;   	% Not estimated  
-hn10  = 0.4;	% Not estimated
+hntnf = 2;      % Not estimated
+xn10  = 4;      % Not estimated  
+hn10  = 0.4;    % Not estimated
 
 noI   = 0;
 Init = [Init noI];
@@ -202,7 +203,7 @@ Init = [Init noI];
 %-------------------Resistance equation parameters-------------------------
 krpp = 4.88645; % Nom Val 10 
 xrpp = 230;     % Not estimated 
-hrpp = 2;		% Not estimated
+hrpp = 2;       % Not estimated
 krno = 0.65;    % Not estimated 
 kr   = 1.85267; % Nom Val 2 
 
